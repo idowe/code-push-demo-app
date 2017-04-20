@@ -22,28 +22,28 @@ class CodePushDemoApp extends Component {
     console.log(this.setState);
     switch(syncStatus) {
       case CodePush.SyncStatus.CHECKING_FOR_UPDATE:
-        this.setState({ syncMessage: "Checking for update." });
+        this.setState({ syncMessage: "检查更新." });
         break;
       case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
-        this.setState({ syncMessage: "Downloading package." });
+        this.setState({ syncMessage: "正在下载更新包." });
         break;
       case CodePush.SyncStatus.AWAITING_USER_ACTION:
-        this.setState({ syncMessage: "Awaiting user action." });
+        this.setState({ syncMessage: "等待操作." });
         break;
       case CodePush.SyncStatus.INSTALLING_UPDATE:
-        this.setState({ syncMessage: "Installing update." });
+        this.setState({ syncMessage: "正在安装更新包." });
         break;
       case CodePush.SyncStatus.UP_TO_DATE:
-        this.setState({ syncMessage: "App up to date.", progress: false });
+        this.setState({ syncMessage: "最新版本.", progress: false });
         break;
       case CodePush.SyncStatus.UPDATE_IGNORED:
-        this.setState({ syncMessage: "Update cancelled by user.", progress: false });
+        this.setState({ syncMessage: "更新取消.", progress: false });
         break;
       case CodePush.SyncStatus.UPDATE_INSTALLED:
-        this.setState({ syncMessage: "Update installed.", progress: false });
+        this.setState({ syncMessage: "更新已经完成.", progress: false });
         break;
       case CodePush.SyncStatus.UNKNOWN_ERROR:
-        this.setState({ syncMessage: "An unknown error occurred.", progress: false });
+        this.setState({ syncMessage: "出现错误.", progress: false });
         break;
     }
   }
@@ -64,7 +64,13 @@ class CodePushDemoApp extends Component {
     CodePush.sync(
       {
         installMode: CodePush.InstallMode.IMMEDIATE,
-        updateDialog: true
+        updateDialog: { 
+            title: "有新的更新!",
+            optionalIgnoreButtonLabel:"忽略",
+            optionalInstallButtonLabel:"安装",
+            mandatoryContinueButtonLabel:"继续",
+            optionalUpdateMessage:"一个新的更新，你要更新吗？"    
+        }
       },
       this.codePushStatusDidChange.bind(this),
       this.codePushDownloadDidProgress.bind(this)
@@ -81,7 +87,7 @@ class CodePushDemoApp extends Component {
     } else {
       syncButton = (
         <TouchableOpacity onPress={this.sync.bind(this)}>
-          <Text style={styles.syncButton}>Start Sync!</Text>
+          <Text style={styles.syncButton}>开始异步更新!</Text>
         </TouchableOpacity>
       );
     }
@@ -95,14 +101,17 @@ class CodePushDemoApp extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to CodePush!
+          欢迎使用热更新服务 V1.0.2!
+        </Text>
+        <Text style={styles.welcome}>
+          https://www.regeng.xin
         </Text>
         {syncButton}
         {syncView}
         {progressView}
         <Image style={styles.image} resizeMode={Image.resizeMode.contain} source={require("./images/laptop_phone_howitworks.png")}/>
         <TouchableOpacity onPress={this.toggleAllowRestart.bind(this)}>
-          <Text style={styles.restartToggleButton}>Restart { this.state.restartAllowed ? "allowed" : "forbidden"}</Text>
+          <Text style={styles.restartToggleButton}>{ this.state.restartAllowed ? "允许" : "不允许"} 重启</Text>
         </TouchableOpacity>
       </View>
     );
